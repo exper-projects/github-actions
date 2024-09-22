@@ -48,8 +48,8 @@ jobs:
           git add package.json
           git commit -m "RELEASE_$RELEASE_TYPE: bump version to $RELEASE_VERSION"
           git push origin dev
-          echo "RELEASE_TYPE='$RELEASE_TYPE'" >> $GITHUB_OUTPUT
-          echo "RELEASE_VERSION='$RELEASE_VERSION'" >> $GITHUB_OUTPUT
+          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
 
       - name: Create release PR
         env:
