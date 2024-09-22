@@ -47,13 +47,11 @@ jobs:
           git add package.json
           git commit -m "RELEASE_$RELEASE_TYPE: bump version to $RELEASE_VERSION"
           git push origin dev
-          echo "::set-output name=RELEASE_TYPE::$RELEASE_TYPE"
-          echo "::set-output name=RELEASE_VERSION::$RELEASE_VERSION"
+          echo "RELEASE_TYPE=$RELEASE_TYPE" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
 
       - name: Create release PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          RELEASE_TYPE=${{ steps.version_step.outputs.RELEASE_TYPE }}
-          RELEASE_VERSION=${{ steps.version_step.outputs.RELEASE_VERSION }}
-          gh pr create --base main --head dev --title "[Release $RELEASE_TYPE]: publish package v$RELEASE_VERSION" --body "This PR all changes from `dev` to `main` branch"
+          gh pr create --base main --head dev --title "[Release $RELEASE_TYPE]: publish package v$RELEASE_VERSION" --body "This PR includes all changes from the dev branch to the main branch"
