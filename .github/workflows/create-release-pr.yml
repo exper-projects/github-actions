@@ -1,0 +1,54 @@
+name: Create release PR
+run-name: Create release PR triggered by ${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: "Release Type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  create-release-pr:
+    name: "Create release PR"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Create trigger commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config advice.ignoredHook false
+          git fetch
+          git checkout dev
+          npm version --no-git-tag-version ${{ github.event.inputs.releaseType }}
+          RELEASE_TYPE=$(echo "${{ github.event.inputs.releaseType }}" | tr '[:lower:]' '[:upper:]')
+          RELEASE_VERSION=$(node -p "require('./package.json').version")
+          git add package.json
+          git commit -m "RELEASE_$RELEASE_TYPE: bump version to $RELEASE_VERSION"
+          git push origin dev
+
+      - name: Create release PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base main --head dev --title "[Release $RELEASE_TYPE]: publish package v$RELEASE_VERSION" --body "This PR all changes from `dev` to `main` branch"
