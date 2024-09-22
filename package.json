@@ -2,7 +2,24 @@
   "name": "@proj-experiments/github-actions",
   "version": "1.0.0",
   "description": "",
+  "module": "dist",
   "main": "index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/proj-experiments/github-actions#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proj-experiments/github-actions.git"
+  },
+  "bugs": {
+    "url": "https://github.com/proj-experiments/github-actions/issues"
+  },
   "scripts": {
     "build": "tsc",
     "semantic-release": "semantic-release"
